@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useHistory } from "react-router-dom";
 import axios from "axios";
+import { Link, useHistory, useParams } from "react-router-dom";
 
-export default function DiscoverMoviesPage() {
+export default function Discover() {
   const [searchText, set_searchText] = useState("");
-  const [searchState, set_searchState] = useState("idle");
-  const [movieState, set_movieState] = useState([]);
-  const params = useParams();
+  const [searchMode, setSearchMode] = useState("status: idle");
+  const [movies, setMovies] = useState([]);
   const history = useHistory();
-  console.log("PARAMS", params);
+  const params = useParams();
+
   const search = async () => {
     const routeParam = encodeURIComponent(searchText);
     history.push(`/discover/${routeParam}`);
@@ -20,43 +20,42 @@ export default function DiscoverMoviesPage() {
     async function fetchMovieData() {
       const queryParam = encodeURIComponent(params.searchtext);
 
-      set_searchState("Status: searching");
+      setSearchMode("status: searching");
 
       const data = await axios.get(
-        `https://omdbapi.com/?apikey=142aeec2&s=${queryParam}`
+        `https://omdbapi.com/?apikey=e52a9138&s=${queryParam}`
       );
 
-      console.log("what is the result", data);
-      set_searchState("Status: done!");
-      set_movieState(data.data.Search);
+      console.log("Success!", data);
+
+      setSearchMode("status: done");
+
+      setMovies(data.data.Search);
     }
+
     fetchMovieData();
   }, [params]);
-
-  //set_Movies sets the data inside the movieState, then you can use .map in the return part
 
   return (
     <div className="discover">
       <h1>Discover some movies!</h1>
-      <div>{searchState}</div>
-
+      <div>{searchMode}</div>
       <p>
         <input
           type="text"
           value={searchText}
-          placeholder="Search now"
+          placeholder="Enter name"
           onChange={(e) => set_searchText(e.target.value)}
         />
         <button onClick={search}>Search</button>
       </p>
       <div className="movies">
-        {searchState === "searching" && <p>Loading....</p>}
-        {movieState.map((movie, index) => {
+        {movies.map((movie, index) => {
           return (
             <Link key={index} to={`/movie/${movie.imdbID}`}>
               <div>
                 <h1>{movie.Title}</h1>
-                <img alt={movie.Poster} src={movie.Poster}></img>
+                <img alt={movie.Title} src={movie.Poster} />
               </div>
             </Link>
           );
