@@ -10,12 +10,15 @@ export default function Moviepage() {
   useEffect(() => {
     const getMovieById = async () => {
       const movieId = params.movieId;
+
       const response = await axios.get(
         `https://omdbapi.com/?apikey=e52a9138&i=${movieId}`
       );
       console.log("RESPONSE", response);
       setMovie(response.data);
+      console.log("movieID", movieId);
     };
+
     getMovieById();
   }, [params.movieId]);
 

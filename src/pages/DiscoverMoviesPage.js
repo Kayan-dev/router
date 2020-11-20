@@ -8,7 +8,9 @@ export default function DiscoverMoviesPage() {
   const [movieState, set_movieState] = useState([]);
   const params = useParams();
   const history = useHistory();
+
   console.log("PARAMS", params);
+
   const search = async () => {
     const routeParam = encodeURIComponent(searchText);
     history.push(`/discover/${routeParam}`);
@@ -22,16 +24,18 @@ export default function DiscoverMoviesPage() {
 
       set_searchState("Status: searching");
 
-      const data = await axios.get(
+      const response = await axios.get(
         `https://omdbapi.com/?apikey=142aeec2&s=${queryParam}`
       );
 
-      console.log("what is the result", data);
+      console.log("what is the result", response);
       set_searchState("Status: done!");
-      set_movieState(data.data.Search);
+      set_movieState(response.data.Search);
     }
-    fetchMovieData();
-  }, [params]);
+    if (params.searchtext) {
+      fetchMovieData();
+    }
+  }, [params.searchtext]);
 
   //set_Movies sets the data inside the movieState, then you can use .map in the return part
 
